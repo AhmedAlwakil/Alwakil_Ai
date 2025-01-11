@@ -11,7 +11,7 @@ apscheduler.schedulers.asyncio.AsyncIOScheduler.timezone = utc
 app = Flask(__name__)
 
 # استبدل التوكن بالتوكن الخاص بك
-TELEGRAM_TOKEN = '7910988129:AAEdaXIk-K2zeYbN_EjtiVCRaiwgVoQNuVA'
+TELEGRAM_TOKEN = '7910988129:AAFlC1P2tEqMnW71njPUjbFfByC5_9ZpIYk'
 
 # تعريف الأوامر
 async def start(update: Update, context):
