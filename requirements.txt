@@ -1,4 +1,7 @@
 Flask==2.0.2
+requests==2.26.0
 python-telegram-bot==20.0
 apscheduler==3.8.1
 pytz==2021.1
+requests==2.26.0
+gitpython
