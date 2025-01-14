@@ -2,34 +2,18 @@
 from flask import Flask, request
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
-from pytz import utc
-from git import Repo
-import os
+import requests
 
 # تعيين المنطقة الزمنية لـ apscheduler
 import apscheduler.schedulers.asyncio
-apscheduler.schedulers.asyncio.AsyncIOScheduler.timezone = utc
+apscheduler.schedulers.asyncio.AsyncIOScheduler.timezone = "UTC"
 
 app = Flask(__name__)
 
 # استبدل التوكن بالتوكن الخاص بك
 TELEGRAM_TOKEN = '7910988129:AAGPp7Q7PCT_Epy04MnpnSr3frOUqgwDuzY'
 
-# رابط المستودع
-repo_url = "https://github.com/AhmedAlwakil/Alwakil_Ai.git"
-repo_path = "./local_repo"
-
-# استنساخ المستودع من GitHub إذا لم يكن موجودًا
-if not os.path.exists(repo_path):
-    try:
-        repo = Repo.clone_from(repo_url, repo_path)
-        print("تم استنساخ المستودع بنجاح!")
-    except Exception as e:
-        print(f"فشل في استنساخ المستودع: {str(e)}")
-else:
-    print("المستودع موجود بالفعل.")
-
-# تعريف الأوامر للبوت
+# تعريف الأوامر
 async def start(update: Update, context):
     await update.message.reply_text("مرحبًا! أنا بوت التليجرام الخاص بك.")
 
@@ -39,17 +23,21 @@ async def help_command(update: Update, context):
 async def echo(update: Update, context):
     await update.message.reply_text(f"قلت: {update.message.text}")
 
-# تهيئة التطبيق وإضافة الأوامر
+# إنشاء التطبيق مع البوت
 application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+
+# إضافة المعالجات
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("help", help_command))
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
 @app.route('/webhook', methods=['POST'])
 async def webhook():
+    # معالجة البيانات الواردة من Telegram
     update = Update.de_json(request.get_json(force=True), application.bot)
     await application.process_update(update)
     return "ok"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # تشغيل التطبيق Flask
+    app.run(debug=True, host="0.0.0.0", port=5000)
